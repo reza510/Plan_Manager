@@ -1,6 +1,6 @@
 # Plan_Manager
 
-A new Flutter project created with AR510 - Email=> abedireza510@gmail.com
+A new Flutter project created by AR510 - Email=> abedireza510@gmail.com
 
 ## Getting Started
 
