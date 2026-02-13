@@ -20,6 +20,8 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+      - name: Create asset directories
+        run: mkdir -p assets/audio assets/images
 
       - name: Build Debug APK
         run: flutter build apk --debug

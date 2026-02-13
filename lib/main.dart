@@ -1,14 +1,10 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/program_provider.dart';
 import 'screens/main_screens/home_screen.dart';
-import 'theme/dark_fitness_theme.dart'; // اگر تم دارید
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // TODO: تنظیمات اولیه نوتیفیکیشن و ...
-  
   runApp(const MyApp());
 }
 
@@ -22,7 +18,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => ProgramProvider()..loadPrograms(),
         ),
-        // سایر Providerها بعداً اضافه می‌شوند
       ],
       child: MaterialApp(
         title: 'Fitness App',
@@ -35,7 +30,7 @@ class MyApp extends StatelessWidget {
             backgroundColor: Colors.black,
             elevation: 0,
           ),
-          cardTheme: CardTheme(
+          cardTheme: CardThemeData(   // تغییر از CardTheme به CardThemeData
             color: Colors.grey[900],
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
