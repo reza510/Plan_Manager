@@ -1,57 +1,238 @@
-name: Build Flutter APK  # نام workflow که در تب Actions نمایش داده می‌شود
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/program_provider.dart';
+import 'screens/main_screens/home_screen.dart';
+import 'theme/dark_fitness_theme.dart'; // اگر تم دارید
 
-# تعیین زمان اجرای workflow
-on:
-  push:                 # هنگام push به شاخه‌های main یا master
-    branches: [ main, master ]
-  pull_request:         # هنگام ایجاد pull request به این شاخه‌ها
-    branches: [ main, master ]
-  workflow_dispatch:    # امکان اجرای دستی از طریق تب Actions
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-jobs:
-  build:
-    name: Build APK
-    runs-on: ubuntu-latest   # اجرا روی آخرین نسخه اوبونتو
+  // TODO: تنظیمات اولیه نوتیفیکیشن و ...
+  
+  runApp(const MyApp());
+}
 
-    steps:
-      # 1. دریافت کد از مخزن
-      - name: Checkout repository
-        uses: actions/checkout@v4
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-      # 2. نصب Java (مورد نیاز برای کامپایل اندروید)
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'   # نسخه مناسب برای پروژه خود را انتخاب کنید (معمولاً 11 یا 17)
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ProgramProvider()..loadPrograms(),
+        ),
+        // سایر Providerها بعداً اضافه می‌شوند
+      ],
+      child: MaterialApp(
+        title: 'Fitness App',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: Colors.black,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.black,
+            elevation: 0,
+          ),
+          cardTheme: CardTheme(
+            color: Colors.grey[900],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+        home: const HomeScreen(),
+      ),
+    );
+  }
+}
 
-      # 3. نصب فلاتر
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.x'   # می‌توانید نسخه دقیق مثلاً '3.16.0' یا 'stable' بگذارید
-          channel: 'stable'
+// import 'package:flutter/material.dart';
+// import 'package:flutter/scheduler.dart';
 
-      # 4. کش کردن وابستگی‌های پاب (برای سرعت بخشیدن به buildهای بعدی)
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v3
-        with:
-          path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-flutter-
+// void main() {
+//   runApp(const MyApp());
+// }
 
-      # 5. دریافت وابستگی‌های پروژه
-      - name: Install dependencies
-        run: flutter pub get
+// class MyApp extends StatefulWidget {
+//   const MyApp({super.key});
 
-      # 6. ساخت APK (حالت debug برای تست)
-      - name: Build APK
-        run: flutter build apk --debug  # اگر می‌خواهید release بسازید از --release استفاده کنید
+//   @override
+//   State<MyApp> createState() => _MyAppState();
+// }
 
-      # 7. آپلود فایل APK به عنوان artifact
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+// class _MyAppState extends State<MyApp> {
+//   ThemeMode _themeMode = ThemeMode.system;
+
+//   bool get useLightMode {
+//     switch (_themeMode) {
+//       case ThemeMode.system:
+//         return SchedulerBinding.instance.window.platformBrightness ==
+//             Brightness.light;
+//       case ThemeMode.light:
+//         return true;
+//       case ThemeMode.dark:
+//         return false;
+//     }
+//   }
+
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       title: 'Demo',
+//       theme: ThemeData(
+//         useMaterial3: true,
+//         brightness: Brightness.light,
+//       ),
+//       darkTheme: ThemeData(
+//         useMaterial3: true,
+//         brightness: Brightness.dark,
+//       ),
+//       themeMode: _themeMode,
+//       home: MyHomePage(
+//         title: 'Material 3 Demo',
+//         useLightMode: useLightMode,
+//         handleBrightnessChange: (useLightMode) => setState(() {
+//           _themeMode = useLightMode ? ThemeMode.light : ThemeMode.dark;
+//         }),
+//       ),
+//     );
+//   }
+// }
+
+// class MyHomePage extends StatefulWidget {
+//   const MyHomePage({
+//     super.key,
+//     required this.title,
+//     required this.handleBrightnessChange,
+//     required this.useLightMode,
+//   });
+//   final String title;
+//   final bool useLightMode;
+//   final void Function(bool useLightMode) handleBrightnessChange;
+
+//   @override
+//   State<MyHomePage> createState() => _MyHomePageState();
+// }
+
+// class _MyHomePageState extends State<MyHomePage> {
+//   int _counter = 0;
+
+//   void _incrementCounter() {
+//     setState(() {
+//       _counter++;
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(widget.title),
+//         actions: <Widget>[
+//           _BrightnessButton(
+//             handleBrightnessChange: widget.handleBrightnessChange,
+//           ),
+//         ],
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Text(
+//               'You have pushed the button this many times:',
+//               style: Theme.of(context).textTheme.bodyLarge,
+//             ),
+//             Text(
+//               '$_counter',
+//               style: Theme.of(context).textTheme.headlineMedium,
+//             ),
+//           ],
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton.large(
+//         onPressed: _incrementCounter,
+//         tooltip: 'Increment',
+//         child: const Icon(Icons.add),
+//       ), // This trailing comma makes auto-formatting nicer for build methods.
+//     );
+//   }
+// }
+
+// class _BrightnessButton extends StatelessWidget {
+//   const _BrightnessButton({
+//     required this.handleBrightnessChange,
+//     this.showTooltipBelow = true,
+//   });
+
+//   final Function handleBrightnessChange;
+//   final bool showTooltipBelow;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final isBright = Theme.of(context).brightness == Brightness.light;
+//     return Tooltip(
+//       preferBelow: showTooltipBelow,
+//       message: 'Toggle brightness',
+//       child: IconButton(
+//         icon: isBright
+//             ? const Icon(Icons.dark_mode_outlined)
+//             : const Icon(Icons.light_mode_outlined),
+//         onPressed: () => handleBrightnessChange(!isBright),
+//       ),
+//     );
+//   }
+// }
+//         ],
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Text(
+//               'You have pushed the button this many times:',
+//               style: Theme.of(context).textTheme.bodyLarge,
+//             ),
+//             Text(
+//               '$_counter',
+//               style: Theme.of(context).textTheme.headlineMedium,
+//             ),
+//           ],
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton.large(
+//         onPressed: _incrementCounter,
+//         tooltip: 'Increment',
+//         child: const Icon(Icons.add),
+//       ), // This trailing comma makes auto-formatting nicer for build methods.
+//     );
+//   }
+// }
+
+// class _BrightnessButton extends StatelessWidget {
+//   const _BrightnessButton({
+//     required this.handleBrightnessChange,
+//     this.showTooltipBelow = true,
+//   });
+
+//   final Function handleBrightnessChange;
+//   final bool showTooltipBelow;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final isBright = Theme.of(context).brightness == Brightness.light;
+//     return Tooltip(
+//       preferBelow: showTooltipBelow,
+//       message: 'Toggle brightness',
+//       child: IconButton(
+//         icon: isBright
+//             ? const Icon(Icons.dark_mode_outlined)
+//             : const Icon(Icons.light_mode_outlined),
+//         onPressed: () => handleBrightnessChange(!isBright),
+//       ),
+//     );
+//   }
+// }
