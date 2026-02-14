@@ -1,14 +1,13 @@
+// android/build.gradle.kts
 buildscript {
-    ext {
-        set("kotlin_version", "2.1.0")
-    }
+    extra["kotlin_version"] = "2.1.0"
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.9.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${ext.get("kotlin_version")}")
+        classpath("com.android.tools.build:gradle:8.1.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${extra["kotlin_version"]}")
     }
 }
 
