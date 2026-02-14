@@ -18,6 +18,8 @@ jobs:
         with:
           flutter-version: '3.x'
 
+      - name: Flutter Clear
+        run: flutter clean
       - name: Install dependencies
         run: flutter pub get
       - name: Create asset directories
