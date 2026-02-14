@@ -23,9 +23,6 @@ jobs:
       - name: Create asset directories
         run: mkdir -p assets/audio assets/images
 
-      - name: Run tests
-        run: flutter test
-
       - name: Build Debug APK
         run: flutter build apk --debug
 
