@@ -12,41 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # State Management
-  provider: ^6.1.1
-
-  # Local Storage
-  shared_preferences: ^2.2.2
-  path_provider: ^2.1.1
-
-  # JSON Serialization
-  json_annotation: ^4.8.1
-
-  # File picking for import/export
-  file_picker: ^6.1.1
-
-  # Calendar
-  table_calendar: ^3.0.9
-
-  # Notifications
-  flutter_local_notifications: ^16.3.2
-  android_alarm_manager_plus: ^5.0.0
-
-  # Audio
-  just_audio: ^0.9.36
-  audioplayers: ^5.2.1
-
-  # Icons
-  cupertino_icons: ^1.0.6
-
-  # Image Picker
-  image_picker: ^1.0.5
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.8
-  json_serializable: ^6.7.1
   flutter_lints: ^3.0.0
 
 flutter:
