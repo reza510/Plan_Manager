@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/program_provider.dart';
 import '../../widgets/program_card.dart';
 import '../../models/program.dart';
-import '../../models/program.dart';
+import '../program/program_detail_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -37,9 +37,12 @@ class HomeScreen extends StatelessWidget {
                   program: program,
                   onTap: () {
                     // TODO: رفتن به صفحه جزئیات برنامه
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text('${program.programName} انتخاب شد')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ProgramDetailScreen(program: program),
+                      ),
                     );
                   },
                   onEdit: () {
