@@ -7,6 +7,7 @@ class ProgramCard extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final VoidCallback? onExport;
+  final VoidCallback? onSetCurrent; // اضافه شد
 
   const ProgramCard({
     super.key,
@@ -15,6 +16,7 @@ class ProgramCard extends StatelessWidget {
     this.onEdit,
     this.onDelete,
     this.onExport,
+    this.onSetCurrent,
   });
 
   @override
@@ -32,7 +34,6 @@ class ProgramCard extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              // آیکون یا تصویر
               Container(
                 width: 50,
                 height: 50,
@@ -47,7 +48,6 @@ class ProgramCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              // اطلاعات برنامه
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +78,6 @@ class ProgramCard extends StatelessWidget {
                   ],
                 ),
               ),
-              // منوی سه نقطه
               PopupMenuButton<String>(
                 onSelected: (value) {
                   switch (value) {
@@ -90,6 +89,9 @@ class ProgramCard extends StatelessWidget {
                       break;
                     case 'export':
                       onExport?.call();
+                      break;
+                    case 'set_current': // اضافه شد
+                      onSetCurrent?.call();
                       break;
                   }
                 },
@@ -121,6 +123,17 @@ class ProgramCard extends StatelessWidget {
                         Icon(Icons.upload_file, size: 18),
                         SizedBox(width: 8),
                         Text('خروجی JSON'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    // گزینه جدید
+                    value: 'set_current',
+                    child: Row(
+                      children: [
+                        Icon(Icons.play_arrow, size: 18, color: Colors.green),
+                        SizedBox(width: 8),
+                        Text('تنظیم به عنوان برنامه جاری'),
                       ],
                     ),
                   ),

@@ -4,6 +4,7 @@ import '../../providers/program_provider.dart';
 import '../../widgets/program_card.dart';
 import '../../models/program.dart';
 import '../program/program_detail_screen.dart';
+import '../../providers/settings_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -33,10 +34,9 @@ class HomeScreen extends StatelessWidget {
               itemCount: programProvider.programs.length,
               itemBuilder: (context, index) {
                 final program = programProvider.programs[index];
-                return ProgramCard(
+                ProgramCard(
                   program: program,
                   onTap: () {
-                    // TODO: رفتن به صفحه جزئیات برنامه
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
                     );
                   },
                   onEdit: () {
-                    // TODO: رفتن به صفحه ویرایش
+                    // TODO: ویرایش
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('ویرایش ${program.programName}')),
                     );
@@ -55,9 +55,19 @@ class HomeScreen extends StatelessWidget {
                     _showDeleteDialog(context, program);
                   },
                   onExport: () {
-                    // TODO: پیاده‌سازی خروجی JSON
+                    // TODO: خروجی
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('خروجی ${program.programName}')),
+                    );
+                  },
+                  onSetCurrent: () {
+                    // اضافه شد
+                    Provider.of<SettingsProvider>(context, listen: false)
+                        .setCurrentProgram(program.programName);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              '${program.programName} به عنوان برنامه جاری انتخاب شد')),
                     );
                   },
                 );

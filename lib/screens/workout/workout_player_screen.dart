@@ -2,15 +2,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../models/exercise.dart';
+import '../../models/workout_log.dart';
+import '../../services/history_service.dart';
 
 class WorkoutPlayerScreen extends StatefulWidget {
   final List<Exercise> exercises;
   final int initialIndex;
+  final String programName; // نام برنامه برای ذخیره در تاریخچه
 
   const WorkoutPlayerScreen({
     Key? key,
     required this.exercises,
     this.initialIndex = 0,
+    required this.programName,
   }) : super(key: key);
 
   @override
@@ -78,9 +82,30 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
 
   void _playSound() async {
     try {
-      await _audioPlayer.play(AssetSource('audio/beep.mp3'));
+      // استفاده از فایل صوتی
+      await _audioPlayer.play(AssetSource('audio/News-Ting.mp3'));
     } catch (e) {
-      // ignore
+      // اگر صدا پخش نشد، فقط ادامه بده (بدون کرش)
+    }
+  }
+
+  // ذخیره لاگ برای تمرین جاری (پس از اتمام کامل)
+  Future<void> _saveLogForCurrentExercise() async {
+    try {
+      final log = WorkoutLog(
+        exerciseName: currentExercise.exerciseName,
+        date: DateTime.now(),
+        setsCompleted: totalSets, // تمام ست‌ها انجام شده
+        repsPerSet: currentExercise.reps,
+        weightUsed: currentExercise.weight,
+        duration: (currentExercise.setType == SetType.time
+            ? (currentExercise.targetTime ?? 0) * totalSets
+            : 0),
+        programName: widget.programName,
+      );
+      await HistoryService.addLog(log);
+    } catch (e) {
+      // اگر خطا در ذخیره لاگ بود، فقط ignore (لاگ ذخیره نشه بهتر از کرش برنامه است)
     }
   }
 
@@ -94,19 +119,23 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
         _isRunning = false;
       });
     } else {
-      if (currentExerciseIndex + 1 < widget.exercises.length) {
-        setState(() {
-          currentExerciseIndex++;
-          currentSetIndex = 1;
-          _updateCurrentExercise();
-          _isWorkPhase = true;
-          _resetTimerForCurrentPhase();
-          _pauseTimer();
-          _isRunning = false;
-        });
-      } else {
-        _showCompletionDialog();
-      }
+      // تمرین فعلی کامل شد -> ذخیره لاگ
+      _saveLogForCurrentExercise().then((_) {
+        if (currentExerciseIndex + 1 < widget.exercises.length) {
+          setState(() {
+            currentExerciseIndex++;
+            currentSetIndex = 1;
+            _updateCurrentExercise();
+            _isWorkPhase = true;
+            _resetTimerForCurrentPhase();
+            _pauseTimer();
+            _isRunning = false;
+          });
+        } else {
+          // کل تمرینات تمام شد
+          _showCompletionDialog();
+        }
+      });
     }
   }
 
@@ -120,8 +149,8 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.pop(context); // بستن دیالوگ
+              Navigator.pop(context); // برگشت به صفحه قبل
             },
             child: const Text('باشه'),
           ),

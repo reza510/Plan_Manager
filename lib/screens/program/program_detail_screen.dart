@@ -50,6 +50,7 @@ class ProgramDetailScreen extends StatelessWidget {
                               builder: (context) => WorkoutPlayerScreen(
                                 exercises: program.workouts,
                                 initialIndex: index,
+                                programName: program.programName,
                               ),
                             ),
                           );
