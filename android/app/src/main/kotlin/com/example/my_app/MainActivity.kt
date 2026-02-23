@@ -13,7 +13,7 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        permissionHandler = PermissionHandler(flutterEngine)
+        permissionHandler = PermissionHandler(this, flutterEngine)
         permissionHandler.register()
     }
 

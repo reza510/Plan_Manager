@@ -20,11 +20,11 @@ jobs:
 
       - name: Flutter Clear
         run: flutter clean
-      - name: Create these "*.g.dart" Files
-        run: flutter pub run build_runner build
+      # - name: Create these "*.g.dart" Files
+      #   run: flutter pub run build_runner build
       - name: Install dependencies
         run: flutter pub get
-      - name: Create asset directories
+      - name: Create asset Directories
         run: mkdir -p assets/audio assets/images
 
       - name: Build Debug APK
