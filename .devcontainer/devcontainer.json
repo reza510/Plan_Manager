@@ -1,0 +1,39 @@
+{
+	"name": "Flutter 3.29.0 Development",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": ".."
+	},
+	"runArgs": ["--privileged", "-v", "/dev/bus/usb:/dev/bus/usb"],
+	"mounts": ["source=/dev/bus/usb,target=/dev/bus/usb,type=bind"],
+	"forwardPorts": [8081, 5037],
+	"remoteUser": "developer",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"dart.flutterSdkPath": "/opt/flutter",
+				"dart.sdkPath": "/opt/flutter/bin/cache/dart-sdk",
+				"[dart]": {
+					"editor.formatOnSave": true,
+					"editor.formatOnType": true,
+					"editor.rulers": [80],
+					"editor.selectionHighlight": false,
+					"editor.tabCompletion": "onlySnippets",
+					"editor.wordBasedSuggestions": false
+				}
+			},
+			"extensions": [
+				"Dart-Code.dart-code",
+				"Dart-Code.flutter",
+				"vscode-icons-team.vscode-icons"
+			]
+		}
+	},
+	"workspaceFolder": "/workspace",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
+	"postCreateCommand": "flutter doctor && adb start-server",
+	"remoteEnv": {
+		"PATH": "/opt/flutter/bin:/usr/lib/android-sdk/platform-tools:${containerEnv:PATH}"
+	}
+}
